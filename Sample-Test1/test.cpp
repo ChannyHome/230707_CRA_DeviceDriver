@@ -1,12 +1,54 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <vector>
-#include "../230707_CRA_DeviceDriver/DeviceDirver.cpp"
-
+#include "../230707_CRA_DeviceDriver/DeviceDriver.cpp"
 using namespace testing;
 using namespace std;
 
-TEST(TestCaseName, testName) {
+//Mock °´Ã¼
+class FlashMock : public FlashMemoryDevice {
 
-	EXPECT_THAT(1, Eq(1));
+public:
+	MOCK_METHOD(unsigned char, read, (long address), (override));
+	MOCK_METHOD(void, write, (long address, unsigned char data), (override));
+};
+
+
+TEST(TestDeviceDriver, testRead) {
+
+	FlashMock mockDevice;
+	EXPECT_CALL(mockDevice, read).Times(5);
+	//
+	DeviceDriver device(&mockDevice);
+	device.read(0xA);
+
+	//	EXPECT_CALL(mock, getDBName())
+	//.WillRepeatedly(Return(""));
 }
+
+TEST(TestDeviceDriver, testReadFailException) {
+    FlashMock mockDevice;
+    EXPECT_CALL(mockDevice, read)
+        .WillOnce(Return(999))
+        .WillOnce(Return(888));
+
+    DeviceDriver device(&mockDevice);
+
+    try {
+        device.read(0xA);
+        FAIL() << "Expected ReadFailException to be thrown.";
+    }
+    catch (const ReadFailException& e) {
+        SUCCEED();
+    }
+    catch (...) {
+        FAIL() << "Unexpected exception thrown.";
+    }
+}
+
+
+
+
+
+
+
