@@ -1,5 +1,6 @@
 #include "DeviceDriver.h"
 #include <vector>
+#include <string>
 #include <iostream>
 using namespace std;
 
@@ -12,9 +13,10 @@ public:
 	{
 		for (long addr = startAddr; addr <= endAddr; addr++) {
 			int value = driver->read(addr);
-			string addressStr = "Address : " + addr;
-			string valStr = ", Value : " + value;
-			cout << addressStr + valStr << std::endl;
+			//string addressStr = "Address: " + to_string(addr);
+			//string valStr = ", Value: " + to_string(value);
+			//cout << addressStr + valStr << std::endl;
+			cout << "Address: " << hex << addr << ", Value: " << dec << value << endl;
 		}
 	}
 	void WriteAll(int value)
