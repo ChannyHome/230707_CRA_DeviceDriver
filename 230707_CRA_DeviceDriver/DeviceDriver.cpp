@@ -9,6 +9,11 @@ public:
     ReadFailException() : runtime_error("Read failed: Values are not identical.") {}
 };
 
+class WriteFailException : public runtime_error {
+public:
+    WriteFailException() : runtime_error("Write failed: Value already exists at the given address.") {}
+};
+
 DeviceDriver::DeviceDriver(FlashMemoryDevice* hardware) : m_hardware(hardware)
 {}
 
@@ -34,6 +39,10 @@ int DeviceDriver::read(long address)
 
 void DeviceDriver::write(long address, int data)
 {
+    if (read(address) != 0xFF)
+    {
+        throw WriteFailException();
+    }
     // TODO: implement this method
     m_hardware->write(address, (unsigned char)data);
 }

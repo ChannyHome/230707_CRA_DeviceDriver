@@ -46,9 +46,49 @@ TEST(TestDeviceDriver, testReadFailException) {
     }
 }
 
+TEST(TestDeviceDriver, testWriteFailException) {
+
+	FlashMock mockDevice;
+	EXPECT_CALL(mockDevice, read)
+		.WillRepeatedly(Return(999));
+	//
+	DeviceDriver device(&mockDevice);
+	device.read(0xB);
+
+    try {
+        device.write(0xB,111);
+        FAIL() << "Expected ReadFailException to be thrown.";
+    }
+    catch (const WriteFailException& e) {
+        SUCCEED();
+    }
+    catch (...) {
+        FAIL() << "Unexpected exception thrown.";
+    }
+}
 
 
 
+TEST(TestDeviceDriver, testWriteNoFailException) {
+
+    FlashMock mockDevice;
+    EXPECT_CALL(mockDevice, read)
+        .WillRepeatedly(Return(0xFF));
+    //
+    DeviceDriver device(&mockDevice);
+    device.read(0xB);
+
+    try {
+        device.write(0xB, 111);
+        SUCCEED();
+    }
+    catch (const WriteFailException& e) {
+        FAIL() << "Expected WriteFailException to be thrown.";
+    }
+    catch (...) {
+        FAIL() << "Unexpected exception thrown.";
+    }
+}
 
 
 
